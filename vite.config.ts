@@ -1,23 +1,16 @@
-/// <reference types="vitest" />
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import { loadEnv } from 'vite';
 
-import legacy from '@vitejs/plugin-legacy'
-import vue from '@vitejs/plugin-vue'
-import path from 'path'
-import { defineConfig } from 'vite'
+export default defineConfig(({ mode }) => {
+  // Load env file based on `mode` in the current working directory.
+  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
+  const env = loadEnv(mode, process.cwd(), '');
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    vue(),
-    legacy()
-  ],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
+  return {
+    plugins: [vue()],
+    define: {
+      'process.env': env,
     },
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom'
-  }
-})
+  };
+});
